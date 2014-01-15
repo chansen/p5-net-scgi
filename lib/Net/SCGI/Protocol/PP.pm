@@ -25,12 +25,12 @@ sub parse_headers {
       or Carp::croak(q/SCGI: Insufficient number of octets to parse headers/);
 
     (substr($octets, 0, 15) eq "CONTENT_LENGTH\x00")
-      or Carp::croak(q/SCGI: Malformed headers/);
+      or Carp::croak(q/SCGI: Malformed headers: First header must be CONTENT_LENGTH/);
 
     my %headers = ();
     while ($octets =~ /\G ([^\x00]*) \x00 ([^\x00]*) \x00/xgc) {
         (length $1)
-          or Carp::croak(qq/SCGI: Malformed header name/);
+          or Carp::croak(qq/SCGI: Malformed header name: zero length/);
         (!exists $headers{$1})
           or Carp::croak(qq/SCGI: Duplicate header name: '$1'/);
         $headers{$1} = $2;
